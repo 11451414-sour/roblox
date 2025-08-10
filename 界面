@@ -1,0 +1,121 @@
+-- 创建屏幕GUI
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "MyInterface"
+screenGui.Parent = game.Players.LocalPlayer.PlayerGui
+
+-- 创建主框架（作为界面容器）
+local mainFrame = Instance.new("Frame")
+mainFrame.Name = "MainFrame"
+mainFrame.Size = UDim2.new(0, 300, 0, 200) -- 宽300，高200
+mainFrame.Position = UDim2.new(0.5, -150, 0.5, -100) -- 居中显示
+mainFrame.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2) -- 深灰色背景
+mainFrame.BorderSizePixel = 2
+mainFrame.BorderColor3 = Color3.new(0.8, 0.8, 0.8) -- 浅灰色边框
+mainFrame.Parent = screenGui
+
+-- 添加标题文本
+local titleText = Instance.new("TextLabel")
+titleText.Name = "TitleText"
+titleText.Size = UDim2.new(1, 0, 0, 30) -- 占满框架宽度，高度30
+titleText.Position = UDim2.new(0, 0, 0, 10)
+titleText.Text = "我的界面"
+titleText.TextColor3 = Color3.new(1, 1, 1) -- 白色文本
+titleText.BackgroundTransparency = 1 -- 透明背景
+titleText.Font = Enum.Font.SourceSansBold
+titleText.TextSize = 18
+titleText.Parent = mainFrame
+
+-- 添加功能按钮
+local actionButton = Instance.new("TextButton")
+actionButton.Name = "ActionButton"
+actionButton.Size = UDim2.new(0, 150, 0, 40)
+actionButton.Position = UDim2.new(0.5, -75, 0, 80) -- 居中显示在框架内
+actionButton.Text = "点击执行"
+actionButton.TextColor3 = Color3.new(1, 1, 1)
+actionButton.BackgroundColor3 = Color3.new(0.3, 0.6, 1) -- 蓝色背景
+actionButton.Font = Enum.Font.SourceSans
+actionButton.TextSize = 16
+actionButton.Parent = mainFrame
+
+-- 按钮点击事件
+actionButton.MouseButton1Click:Connect(function()
+    -- 点击后修改标题文本
+    titleText.Text = "按钮已点击！"
+    -- 可以在这里添加其他功能逻辑（如打开面板、发送指令等）
+end)
+
+-- 添加状态文本（初始隐藏）
+local statusText = Instance.new("TextLabel")
+statusText.Name = "StatusText"
+statusText.Size = UDim2.new(1, 0, 0, 20)
+statusText.Position = UDim2.new(0, 0, 0, 140)
+statusText.Text = ""
+statusText.TextColor3 = Color3.new(0, 1, 0) -- 绿色文本
+statusText.BackgroundTransparency = 1
+statusText.Font = Enum.Font.SourceSans
+statusText.TextSize = 14
+statusText.Parent = mainFrame
+
+-- 3秒后显示状态文本（示例动画效果）
+wait(3)
+statusText.Text = "界面加载完成"-- 创建屏幕GUI
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "MyInterface"
+screenGui.Parent = game.Players.LocalPlayer.PlayerGui
+
+-- 创建主框架（作为界面容器）
+local mainFrame = Instance.new("Frame")
+mainFrame.Name = "MainFrame"
+mainFrame.Size = UDim2.new(0, 300, 0, 200) -- 宽300，高200
+mainFrame.Position = UDim2.new(0.5, -150, 0.5, -100) -- 居中显示
+mainFrame.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2) -- 深灰色背景
+mainFrame.BorderSizePixel = 2
+mainFrame.BorderColor3 = Color3.new(0.8, 0.8, 0.8) -- 浅灰色边框
+mainFrame.Parent = screenGui
+
+-- 添加标题文本
+local titleText = Instance.new("TextLabel")
+titleText.Name = "TitleText"
+titleText.Size = UDim2.new(1, 0, 0, 30) -- 占满框架宽度，高度30
+titleText.Position = UDim2.new(0, 0, 0, 10)
+titleText.Text = "我的界面"
+titleText.TextColor3 = Color3.new(1, 1, 1) -- 白色文本
+titleText.BackgroundTransparency = 1 -- 透明背景
+titleText.Font = Enum.Font.SourceSansBold
+titleText.TextSize = 18
+titleText.Parent = mainFrame
+
+-- 添加功能按钮
+local actionButton = Instance.new("TextButton")
+actionButton.Name = "ActionButton"
+actionButton.Size = UDim2.new(0, 150, 0, 40)
+actionButton.Position = UDim2.new(0.5, -75, 0, 80) -- 居中显示在框架内
+actionButton.Text = "点击执行"
+actionButton.TextColor3 = Color3.new(1, 1, 1)
+actionButton.BackgroundColor3 = Color3.new(0.3, 0.6, 1) -- 蓝色背景
+actionButton.Font = Enum.Font.SourceSans
+actionButton.TextSize = 16
+actionButton.Parent = mainFrame
+
+-- 按钮点击事件
+actionButton.MouseButton1Click:Connect(function()
+    -- 点击后修改标题文本
+    titleText.Text = "按钮已点击！"
+    -- 可以在这里添加其他功能逻辑（如打开面板、发送指令等）
+end)
+
+-- 添加状态文本（初始隐藏）
+local statusText = Instance.new("TextLabel")
+statusText.Name = "StatusText"
+statusText.Size = UDim2.new(1, 0, 0, 20)
+statusText.Position = UDim2.new(0, 0, 0, 140)
+statusText.Text = ""
+statusText.TextColor3 = Color3.new(0, 1, 0) -- 绿色文本
+statusText.BackgroundTransparency = 1
+statusText.Font = Enum.Font.SourceSans
+statusText.TextSize = 14
+statusText.Parent = mainFrame
+
+-- 3秒后显示状态文本（示例动画效果）
+wait(3)
+statusText.Text = "界面加载完成"
