@@ -1,0 +1,298 @@
+-- 速度控制 GUI 脚本 (带缩小按钮)
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+
+-- 默认速度
+local defaultWalkSpeed = humanoid.WalkSpeed
+local defaultRunSpeed = humanoid.RunSpeed
+
+-- 速度设置
+local speedIncrement = 5
+local maxSpeed = 50
+local minSpeed = 5
+
+-- 创建屏幕GUI
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "SpeedControlGUI"
+ScreenGui.Parent = player:WaitForChild("PlayerGui")
+
+-- 主框架
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 300, 0, 150)
+MainFrame.Position = UDim2.new(0.5, -150, 0.8, -75)
+MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+MainFrame.BackgroundTransparency = 0.2
+MainFrame.BorderSizePixel = 0
+MainFrame.ClipsDescendants = true
+MainFrame.Parent = ScreenGui
+
+-- 圆角
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 12)
+UICorner.Parent = MainFrame
+
+-- 标题栏
+local TitleBar = Instance.new("Frame")
+TitleBar.Name = "TitleBar"
+TitleBar.Size = UDim2.new(1, 0, 0, 30)
+TitleBar.Position = UDim2.new(0, 0, 0, 0)
+TitleBar.BackgroundTransparency = 1
+TitleBar.Parent = MainFrame
+
+-- 标题
+local Title = Instance.new("TextLabel")
+Title.Name = "Title"
+Title.Size = UDim2.new(0.7, 0, 1, 0)
+Title.Position = UDim2.new(0, 10, 0, 0)
+Title.BackgroundTransparency = 1
+Title.Text = "速度控制器"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 18
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Parent = TitleBar
+
+-- 缩小按钮
+local MinimizeButton = Instance.new("TextButton")
+MinimizeButton.Name = "MinimizeButton"
+MinimizeButton.Size = UDim2.new(0, 25, 0, 25)
+MinimizeButton.Position = UDim2.new(1, -30, 0, 2)
+MinimizeButton.BackgroundColor3 = Color3.fromRGB(60, 60, 70)
+MinimizeButton.Text = "-"
+MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinimizeButton.Font = Enum.Font.GothamBold
+MinimizeButton.TextSize = 18
+MinimizeButton.Parent = TitleBar
+
+-- 缩小按钮圆角
+local MinimizeButtonCorner = Instance.new("UICorner")
+MinimizeButtonCorner.CornerRadius = UDim.new(0, 6)
+MinimizeButtonCorner.Parent = MinimizeButton
+
+-- 速度显示
+local SpeedDisplay = Instance.new("TextLabel")
+SpeedDisplay.Name = "SpeedDisplay"
+SpeedDisplay.Size = UDim2.new(1, -40, 0, 40)
+SpeedDisplay.Position = UDim2.new(0, 20, 0, 40)
+SpeedDisplay.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+SpeedDisplay.BackgroundTransparency = 0.3
+SpeedDisplay.Text = "当前速度: "..humanoid.WalkSpeed
+SpeedDisplay.TextColor3 = Color3.fromRGB(255, 255, 255)
+SpeedDisplay.Font = Enum.Font.GothamMedium
+SpeedDisplay.TextSize = 16
+SpeedDisplay.Parent = MainFrame
+
+-- 速度显示圆角
+local SpeedDisplayCorner = Instance.new("UICorner")
+SpeedDisplayCorner.CornerRadius = UDim.new(0, 8)
+SpeedDisplayCorner.Parent = SpeedDisplay
+
+-- 增加速度按钮
+local IncreaseButton = Instance.new("TextButton")
+IncreaseButton.Name = "IncreaseButton"
+IncreaseButton.Size = UDim2.new(0, 100, 0, 35)
+IncreaseButton.Position = UDim2.new(0.5, -110, 0, 90)
+IncreaseButton.BackgroundColor3 = Color3.fromRGB(60, 180, 100)
+IncreaseButton.Text = "增加速度 (+)"
+IncreaseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+IncreaseButton.Font = Enum.Font.GothamMedium
+IncreaseButton.TextSize = 14
+IncreaseButton.Parent = MainFrame
+
+-- 减少速度按钮
+local DecreaseButton = Instance.new("TextButton")
+DecreaseButton.Name = "DecreaseButton"
+DecreaseButton.Size = UDim2.new(0, 100, 0, 35)
+DecreaseButton.Position = UDim2.new(0.5, 10, 0, 90)
+DecreaseButton.BackgroundColor3 = Color3.fromRGB(180, 60, 60)
+DecreaseButton.Text = "减少速度 (-)"
+DecreaseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+DecreaseButton.Font = Enum.Font.GothamMedium
+DecreaseButton.TextSize = 14
+DecreaseButton.Parent = MainFrame
+
+-- 重置按钮
+local ResetButton = Instance.new("TextButton")
+ResetButton.Name = "ResetButton"
+ResetButton.Size = UDim2.new(0, 60, 0, 25)
+ResetButton.Position = UDim2.new(0.5, -30, 0, 130)
+ResetButton.BackgroundColor3 = Color3.fromRGB(80, 80, 90)
+ResetButton.Text = "重置"
+ResetButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ResetButton.Font = Enum.Font.Gotham
+ResetButton.TextSize = 12
+ResetButton.Parent = MainFrame
+
+-- 按钮圆角
+local ButtonCorner = Instance.new("UICorner")
+ButtonCorner.CornerRadius = UDim.new(0, 6)
+ButtonCorner.Parent = IncreaseButton
+ButtonCorner:Clone().Parent = DecreaseButton
+ButtonCorner:Clone().Parent = ResetButton
+
+-- 迷你模式框架
+local MiniFrame = Instance.new("Frame")
+MiniFrame.Name = "MiniFrame"
+MiniFrame.Size = UDim2.new(0, 150, 0, 40)
+MiniFrame.Position = MainFrame.Position
+MiniFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+MiniFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+MiniFrame.BackgroundTransparency = 0.2
+MiniFrame.BorderSizePixel = 0
+MiniFrame.Visible = false
+MiniFrame.ClipsDescendants = true
+MiniFrame.Parent = ScreenGui
+
+-- 迷你模式圆角
+local MiniCorner = Instance.new("UICorner")
+MiniCorner.CornerRadius = UDim.new(0, 12)
+MiniCorner.Parent = MiniFrame
+
+-- 迷你模式标题
+local MiniTitle = Instance.new("TextLabel")
+MiniTitle.Name = "MiniTitle"
+MiniTitle.Size = UDim2.new(0.6, 0, 1, 0)
+MiniTitle.Position = UDim2.new(0, 10, 0, 0)
+MiniTitle.BackgroundTransparency = 1
+MiniTitle.Text = "速度控制"
+MiniTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+MiniTitle.Font = Enum.Font.GothamBold
+MiniTitle.TextSize = 14
+MiniTitle.TextXAlignment = Enum.TextXAlignment.Left
+MiniTitle.Parent = MiniFrame
+
+-- 迷你模式展开按钮
+local ExpandButton = Instance.new("TextButton")
+ExpandButton.Name = "ExpandButton"
+ExpandButton.Size = UDim2.new(0, 25, 0, 25)
+ExpandButton.Position = UDim2.new(1, -30, 0, 7)
+ExpandButton.BackgroundColor3 = Color3.fromRGB(60, 60, 70)
+ExpandButton.Text = "+"
+ExpandButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ExpandButton.Font = Enum.Font.GothamBold
+ExpandButton.TextSize = 18
+ExpandButton.Parent = MiniFrame
+
+-- 迷你模式展开按钮圆角
+local ExpandButtonCorner = Instance.new("UICorner")
+ExpandButtonCorner.CornerRadius = UDim.new(0, 6)
+ExpandButtonCorner.Parent = ExpandButton
+
+-- 迷你模式速度显示
+local MiniSpeedDisplay = Instance.new("TextLabel")
+MiniSpeedDisplay.Name = "MiniSpeedDisplay"
+MiniSpeedDisplay.Size = UDim2.new(0, 40, 0, 20)
+MiniSpeedDisplay.Position = UDim2.new(0.6, 0, 0, 10)
+MiniSpeedDisplay.BackgroundTransparency = 1
+MiniSpeedDisplay.Text = humanoid.WalkSpeed
+MiniSpeedDisplay.TextColor3 = Color3.fromRGB(255, 255, 255)
+MiniSpeedDisplay.Font = Enum.Font.GothamBold
+MiniSpeedDisplay.TextSize = 16
+MiniSpeedDisplay.Parent = MiniFrame
+
+-- 按钮动画函数
+local function animateButton(button)
+    local originalSize = button.Size
+    local tweenInfo = TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    
+    local shrink = TweenService:Create(button, tweenInfo, {Size = originalSize - UDim2.new(0, 5, 0, 5)})
+    local grow = TweenService:Create(button, tweenInfo, {Size = originalSize})
+    
+    shrink:Play()
+    shrink.Completed:Connect(function()
+        grow:Play()
+    end)
+end
+
+-- 更新速度显示
+local function updateSpeedDisplay()
+    local speed = humanoid.WalkSpeed
+    SpeedDisplay.Text = "当前速度: "..speed
+    MiniSpeedDisplay.Text = speed
+end
+
+-- 增加速度函数
+local function increaseSpeed()
+    if humanoid.WalkSpeed + speedIncrement <= maxSpeed then
+        humanoid.WalkSpeed = humanoid.WalkSpeed + speedIncrement
+        humanoid.RunSpeed = humanoid.RunSpeed + speedIncrement
+    else
+        humanoid.WalkSpeed = maxSpeed
+        humanoid.RunSpeed = maxSpeed
+    end
+    updateSpeedDisplay()
+    animateButton(IncreaseButton)
+end
+
+-- 减少速度函数
+local function decreaseSpeed()
+    if humanoid.WalkSpeed - speedIncrement >= minSpeed then
+        humanoid.WalkSpeed = humanoid.WalkSpeed - speedIncrement
+        humanoid.RunSpeed = humanoid.RunSpeed - speedIncrement
+    else
+        humanoid.WalkSpeed = minSpeed
+        humanoid.RunSpeed = minSpeed
+    end
+    updateSpeedDisplay()
+    animateButton(DecreaseButton)
+end
+
+-- 重置速度函数
+local function resetSpeed()
+    humanoid.WalkSpeed = defaultWalkSpeed
+    humanoid.RunSpeed = defaultRunSpeed
+    updateSpeedDisplay()
+    animateButton(ResetButton)
+end
+
+-- 切换迷你模式
+local function toggleMinimize()
+    if MainFrame.Visible then
+        -- 切换到迷你模式
+        MainFrame.Visible = false
+        MiniFrame.Visible = true
+        MiniFrame.Position = MainFrame.Position
+    else
+        -- 切换到完整模式
+        MiniFrame.Visible = false
+        MainFrame.Visible = true
+    end
+end
+
+-- 按钮点击事件
+IncreaseButton.MouseButton1Click:Connect(increaseSpeed)
+DecreaseButton.MouseButton1Click:Connect(decreaseSpeed)
+ResetButton.MouseButton1Click:Connect(resetSpeed)
+MinimizeButton.MouseButton1Click:Connect(toggleMinimize)
+ExpandButton.MouseButton1Click:Connect(toggleMinimize)
+
+-- 键盘快捷键 (可选)
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+    
+    if input.KeyCode == Enum.KeyCode.Equals then -- 按 = 键增加速度
+        increaseSpeed()
+    elseif input.KeyCode == Enum.KeyCode.Minus then -- 按 - 键减少速度
+        decreaseSpeed()
+    elseif input.KeyCode == Enum.KeyCode.R then -- 按 R 键重置速度
+        resetSpeed()
+    elseif input.KeyCode == Enum.KeyCode.M then -- 按 M 键切换迷你模式
+        toggleMinimize()
+    end
+end)
+
+-- 角色重生时重置速度
+player.CharacterAdded:Connect(function(newCharacter)
+    character = newCharacter
+    humanoid = character:WaitForChild("Humanoid")
+    humanoid.WalkSpeed = defaultWalkSpeed
+    humanoid.RunSpeed = defaultRunSpeed
+    updateSpeedDisplay()
+end)
